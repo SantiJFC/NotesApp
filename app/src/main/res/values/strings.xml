@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NotesApp</string>
+    <string name="oculta_contrasena">Oculta contrasena</string>
+    <string name="mostrar_contrasena">Mostrar Contrasena\t\t\t</string>
+</resources>
