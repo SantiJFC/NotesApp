@@ -87,6 +87,7 @@ fun Home(
         homeViewModel?.loadNotes()
     }
 
+
     ////////////////////////////////////////////////////////////////////////
     /*    //Si deshabilito este segmento tengo la pervisualización
         // Compruebo si el usuario está registrado
@@ -170,7 +171,7 @@ fun Home(
                                     onDismissRequest = {
                                         openDialog = false
                                     },
-                                    title = { Text(text = "Borrar nota?") },
+                                    title = { Text(text = "¿Borrar nota?") },
                                     confirmButton = {
                                         Button(
                                             onClick = {
@@ -224,7 +225,7 @@ fun NoteItem(
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
-    Card( //Genero eventos sobre plantas para hacer diferentes clicks
+    Card( //Genero eventos sobre notas para hacer diferentes clicks
         modifier = Modifier
             .combinedClickable(
                 onLongClick = { onLongClick.invoke() },
@@ -300,5 +301,5 @@ fun BannerAd(modifier: Modifier = Modifier, adId: String) {
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    Home(homeViewModel = null, onNoteClick = {}, navToDetailPage = { /*TODO*/ }) {}
+    Home(homeViewModel = null, onNoteClick = {}, navToDetailPage = { /* TODO */ }) {}
 }

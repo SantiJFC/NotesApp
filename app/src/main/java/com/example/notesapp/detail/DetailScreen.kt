@@ -31,8 +31,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.notesapp.Utils
 import com.example.notesapp.ui.theme.NotesAppTheme
 import kotlinx.coroutines.launch
@@ -122,8 +124,10 @@ fun DetailScreen(
             OutlinedTextField(value = detailUiState.title, onValueChange = {
                 detailViewModel?.onTitleChange(it)
             }, label = {
-                Text(text = "Título")
-            }, modifier = Modifier
+                Text(text = "Título",fontSize = 18.sp)
+            },
+                textStyle = TextStyle(fontSize = 24.sp),
+                modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
             )
@@ -132,8 +136,10 @@ fun DetailScreen(
                     detailViewModel?.onNoteChange(it)
                 },
                 label = {
-                    Text(text = "Notas")
-                }, modifier = Modifier
+                    Text(text = "Notas",fontSize = 18.sp)
+                },
+                textStyle = TextStyle(fontSize = 20.sp),
+                modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(8.dp)

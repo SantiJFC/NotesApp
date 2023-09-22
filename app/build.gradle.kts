@@ -59,7 +59,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.1.1")
+    implementation("androidx.compose.material3:material3:1.1.2")
     implementation("com.google.firebase:firebase-auth-ktx:22.1.2")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.firebase:firebase-database-ktx:20.2.2")
@@ -91,7 +91,7 @@ dependencies {
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
     // Librería de navigation compose:
-    implementation("androidx.navigation:navigation-compose:2.7.2")
+    implementation("androidx.navigation:navigation-compose:2.7.3")
 
     // Iconos compose:
     implementation ("androidx.compose.material:material-icons-extended:1.5.1")
@@ -106,5 +106,10 @@ dependencies {
     // For example, declare the dependencies for Firebase Authentication and Cloud Firestore
     implementation ("com.google.firebase:firebase-auth")
     implementation ("com.google.firebase:firebase-firestore")
+
+    //Dependencias adicionales
+    implementation("androidx.compose.foundation:foundation:1.5.1")
+
+    implementation ("com.google.accompanist:accompanist-pager:0.20.0")
 
 }

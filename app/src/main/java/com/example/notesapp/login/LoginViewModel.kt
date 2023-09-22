@@ -25,6 +25,9 @@ class LoginViewModel(
     var loginUiState by mutableStateOf(LoginUiState())
         private set
 
+    var isPrivacyPolicyAccepted by mutableStateOf(false)
+
+
     fun onUserNameChange(userName: String) {
         loginUiState = loginUiState.copy(userName = userName)
     }

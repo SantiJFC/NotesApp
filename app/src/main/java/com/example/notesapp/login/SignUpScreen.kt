@@ -1,5 +1,6 @@
 package com.example.notesapp.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -53,8 +55,8 @@ fun SignUpScreen(
     loginViewModel: LoginViewModel? = null,
     onNavToHomePage: () -> Unit,
     onNavToLoginPage: () -> Unit,
+    onNavToPrivacyPolicy: () -> Unit
 ) {
-
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.signUpError != null
     val context = LocalContext.current
@@ -63,6 +65,7 @@ fun SignUpScreen(
     fun isValidEmail(email: String): Boolean {
         return EMAIL_VALIDATION_REGEX.toRegex().matches(email)
     }
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -218,7 +221,23 @@ fun SignUpScreen(
             },
             isError = isError
         )
-        Button(onClick = { loginViewModel?.createUser(context) }) {
+        Button(
+            onClick = {
+                if (isValidEmail(loginUiState?.userNameSignUp ?: "") &&
+                    loginUiState?.passwordSignUp == loginUiState?.confirmPasswordSignUp
+                ) {
+                    // Realiza la navegación a la pantalla de política de privacidad
+                    onNavToPrivacyPolicy.invoke() // Navega a PrivacyPolicyScreen
+                } else {
+                    // Muestra un mensaje de error si la validación no se cumple
+                    Toast.makeText(
+                        context,
+                        "Por favor, ingrese un correo válido y asegúrese de que las contraseñas coincidan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        ) {
             Text(text = "Iniciar sesión")
         }
         Spacer(modifier = Modifier.size(16.dp))
@@ -234,7 +253,7 @@ fun SignUpScreen(
             }
         }
         if (loginUiState?.isLoading == true) {
-            CircularProgressIndicator()
+           CircularProgressIndicator()
         }
         LaunchedEffect(key1 = loginViewModel?.hasUser) {
             if (loginViewModel?.hasUser == true) {
@@ -244,11 +263,18 @@ fun SignUpScreen(
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@OptIn(ExperimentalComposeUiApi::class)
+@Preview(showBackground = true)
 @Composable
-fun PreviewSignUpScreen() {
+fun SignUpScreenPreview() {
+    val loginViewModel: LoginViewModel? = null // Puedes proporcionar un ViewModel de ejemplo si es necesario
+
     NotesAppTheme {
-        SignUpScreen(onNavToHomePage = {/*TODO*/ }) {
-        }
+        SignUpScreen(
+            loginViewModel = loginViewModel,
+            onNavToHomePage = {},
+            onNavToLoginPage = {},
+            onNavToPrivacyPolicy = {}
+        )
     }
 }

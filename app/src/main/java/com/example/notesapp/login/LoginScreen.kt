@@ -1,5 +1,7 @@
 package com.example.notesapp.login
 
+import android.content.Context
+import android.content.res.Configuration
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,7 +67,7 @@ fun LoginScreen(
     loginViewModel: LoginViewModel? = null,
     onNavToHomePage: () -> Unit,
     onNavToSignUpPage: () -> Unit,
-    ) {
+) {
     LaunchedEffect(loginViewModel?.googleSignInSuccess) {
         if (loginViewModel?.googleSignInSuccess == true) {
             navController.popBackStack(NestedRoutes.Login.name, inclusive = false)
@@ -74,7 +76,7 @@ fun LoginScreen(
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.loginError != null
 
-    //Necesario el ID de google para poder hacer Login
+    // Necesario el ID de Google para poder hacer Login
     val context = LocalContext.current
     val showPassword = remember { mutableStateOf(false) }
 
@@ -82,7 +84,7 @@ fun LoginScreen(
         return EMAIL_VALIDATION_REGEX.toRegex().matches(email)
     }
 
-    //Gestion de Google
+    // Gestion de Google
     val token =
         "202036634352-k09ebr35rpt63i93pjo7mbi106d75kmc.apps.googleusercontent.com"
     val launcher = rememberLauncherForActivityResult(
@@ -99,165 +101,352 @@ fun LoginScreen(
             Log.d("Notes App", "GoogleSignIn falló")
         }
     }
+
+    // Contenido de la pantalla
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    )
-    {
-        Text(
-            text = "Login",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        if (isError) {
-            Text(
-                text = loginUiState?.loginError ?: "Error desconocido", color = Color.Red
-            )
-        }
-        Image(
-            painter = painterResource(R.drawable.notes_logo_app_blanco),
-            contentDescription = "Imagen inicio sesión",
-            modifier = Modifier
-                .size(230.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .border(1.dp, Color.Green, RoundedCornerShape(26.dp))
-        )
-        Spacer(modifier = Modifier.height(15.dp))
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            value = loginUiState?.userName ?: "",
-            onValueChange = { loginViewModel?.onUserNameChange(it) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null
+    ) {
+        if (isScreenLandscape(LocalContext.current)) {
+            // Orientación apaisada: imagen a la izquierda, datos a la derecha
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.notes_logo_app_blanco),
+                    contentDescription = "Imagen inicio sesión",
+                    modifier = Modifier
+                        .size(230.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .border(1.dp, Color.Green, RoundedCornerShape(26.dp))
                 )
-            },
-            label = {
-                Text("Email")
-            },
-            trailingIcon = {
-                if (loginUiState?.userName?.isNotEmpty() ==true) {
-                    // Modify the behavior of the trailing icon
-                    IconButton(onClick = { loginViewModel?.onUserNameChange("") }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_close_24),
-                            contentDescription = "Borrar usuario"
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Text(
+                        text = "Login",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+
+                    if (isError) {
+                        Text(
+                            text = loginUiState?.loginError ?: "Error desconocido",
+                            color = Color.Red
                         )
+                    }
+
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        value = loginUiState?.userName ?: "",
+                        onValueChange = { loginViewModel?.onUserNameChange(it) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null
+                            )
+                        },
+                        label = {
+                            Text("Email")
+                        },
+                        trailingIcon = {
+                            if (loginUiState?.userName?.isNotEmpty() == true) {
+                                IconButton(onClick = { loginViewModel?.onUserNameChange("") }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.baseline_close_24),
+                                        contentDescription = "Borrar usuario"
+                                    )
+                                }
+                            }
+                        },
+                        isError = isError || (loginUiState?.userName?.isNotBlank() == true && !isValidEmail(
+                            loginUiState.userName
+                        ))
+                    )
+
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        value = loginUiState?.password ?: "",
+                        onValueChange = { loginViewModel?.onPasswordNameChange(it) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
+                        ),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = null
+                            )
+                        },
+                        label = {
+                            Text("Contraseña")
+                        },
+
+                        trailingIcon = {
+                            if (showPassword.value) {
+                                IconButton(onClick = { showPassword.value = false }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.VisibilityOff,
+                                        contentDescription = stringResource(id = R.string.oculta_contrasena)
+                                    )
+                                }
+                            } else {
+                                IconButton(onClick = { showPassword.value = true }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.VisibilityOff,
+                                        contentDescription = stringResource(id = R.string.mostrar_contrasena)
+                                    )
+                                }
+                            }
+                        },
+                        visualTransformation =
+                        if (showPassword.value) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
+                        isError = isError
+                    )
+
+                    Button(onClick = { loginViewModel?.loginUser(context) }) {
+                        Text(text = "Iniciar sesión")
+                    }
+
+                    Spacer(modifier = Modifier.size(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(modifier = Modifier, text = "¿No tienes cuenta?")
+                        Spacer(modifier = Modifier.size(8.dp))
+                        TextButton(onClick = { onNavToSignUpPage.invoke() }) {
+                            Text(
+                                text = "Regístrate",
+                                color = Color.Red,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable {
+                                val opciones = GoogleSignInOptions
+                                    .Builder(
+                                        GoogleSignInOptions.DEFAULT_SIGN_IN
+                                    )
+                                    .requestIdToken(token)
+                                    .requestEmail()
+                                    .build()
+                                val googleSingInCliente = GoogleSignIn.getClient(context, opciones)
+                                launcher.launch(googleSingInCliente.signInIntent)
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_google),
+                            contentDescription = "Login con Google",
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .size(40.dp)
+                        )
+                        Text(
+                            text = "Login con Google",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        if (loginUiState?.isLoading == true) {
+                            CircularProgressIndicator()
+                        }
+                        LaunchedEffect(key1 = loginViewModel?.hasUser) {
+                            if (loginViewModel?.hasUser == true) {
+                                onNavToHomePage.invoke()
+                            }
+                        }
                     }
                 }
-            },
-            isError = isError || (loginUiState?.userName?.isNotBlank() == true && !isValidEmail(
-                loginUiState.userName
-            ))
-        )
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            value = loginUiState?.password ?: "",
-            onValueChange = { loginViewModel?.onPasswordNameChange(it) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null
-                )
-            },
-            label = {
-                Text("Contraseña")
-            },
-
-            trailingIcon = {
-                if (showPassword.value) {
-                    IconButton(onClick = { showPassword.value = false }) {
-                        Icon(
-                            imageVector = Icons.Filled.VisibilityOff,
-                            contentDescription = stringResource(id = R.string.oculta_contrasena)
-                        )
-                    }
-                } else {
-                    IconButton(onClick = { showPassword.value = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.VisibilityOff,
-                            contentDescription = stringResource(id = R.string.mostrar_contrasena)
-                        )
-                    }
-                }
-            },
-            visualTransformation =
-            if (showPassword.value) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-            isError = isError
-        )
-        Button(onClick = { loginViewModel?.loginUser(context) }) {
-            Text(text = "Iniciar sesión")
-        }
-
-        Spacer(modifier = Modifier.size(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(modifier = Modifier, text = "¿No tienes cuenta?")
-            Spacer(modifier = Modifier.size(8.dp))
-            TextButton(onClick = { onNavToSignUpPage.invoke() }) {
-                Text(text = "Regístrate", color = Color.Red, fontWeight = FontWeight.Bold)
             }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .clickable {
-                    val opciones = GoogleSignInOptions
-                        .Builder(
-                            GoogleSignInOptions.DEFAULT_SIGN_IN
-                        )
-                        .requestIdToken(token)
-                        .requestEmail()
-                        .build()
-                    val googleSingInCliente = GoogleSignIn.getClient(context, opciones)
-                    launcher.launch(googleSingInCliente.signInIntent)
-                },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-
-        ) {
+        } else {
+            // Orientación vertical (predeterminada)
+            Text(
+                text = "Login",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            if (isError) {
+                Text(
+                    text = loginUiState?.loginError ?: "Error desconocido",
+                    color = Color.Red
+                )
+            }
             Image(
-                painter = painterResource(id = R.drawable.ic_google),
-                contentDescription = "Login con Google",
+                painter = painterResource(R.drawable.notes_logo_app_blanco),
+                contentDescription = "Imagen inicio sesión",
                 modifier = Modifier
-                    .padding(10.dp)
-                    .size(40.dp)
+                    .size(230.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .border(1.dp, Color.Green, RoundedCornerShape(26.dp))
             )
-            Text(
-                text = "Login con Google",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+            Spacer(modifier = Modifier.height(15.dp))
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                value = loginUiState?.userName ?: "",
+                onValueChange = { loginViewModel?.onUserNameChange(it) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text("Email")
+                },
+                trailingIcon = {
+                    if (loginUiState?.userName?.isNotEmpty() == true) {
+                        IconButton(onClick = { loginViewModel?.onUserNameChange("") }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_close_24),
+                                contentDescription = "Borrar usuario"
+                            )
+                        }
+                    }
+                },
+                isError = isError || (loginUiState?.userName?.isNotBlank() == true && !isValidEmail(
+                    loginUiState.userName
+                ))
             )
-            if (loginUiState?.isLoading == true) {
-                CircularProgressIndicator()
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                value = loginUiState?.password ?: "",
+                onValueChange = { loginViewModel?.onPasswordNameChange(it) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null
+                    )
+                },
+                label = {
+                    Text("Contraseña")
+                },
+
+                trailingIcon = {
+                    if (showPassword.value) {
+                        IconButton(onClick = { showPassword.value = false }) {
+                            Icon(
+                                imageVector = Icons.Filled.VisibilityOff,
+                                contentDescription = stringResource(id = R.string.oculta_contrasena)
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = { showPassword.value = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.VisibilityOff,
+                                contentDescription = stringResource(id = R.string.mostrar_contrasena)
+                            )
+                        }
+                    }
+                },
+                visualTransformation =
+                if (showPassword.value) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                isError = isError
+            )
+            Button(onClick = { loginViewModel?.loginUser(context) }) {
+                Text(text = "Iniciar sesión")
             }
-            LaunchedEffect(key1 = loginViewModel?.hasUser) {
-                if (loginViewModel?.hasUser == true) {
-                    onNavToHomePage.invoke()
+
+            Spacer(modifier = Modifier.size(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(modifier = Modifier, text = "¿No tienes cuenta?")
+                Spacer(modifier = Modifier.size(8.dp))
+                TextButton(onClick = { onNavToSignUpPage.invoke() }) {
+                    Text(text = "Regístrate", color = Color.Red, fontWeight = FontWeight.Bold)
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        val opciones = GoogleSignInOptions
+                            .Builder(
+                                GoogleSignInOptions.DEFAULT_SIGN_IN
+                            )
+                            .requestIdToken(token)
+                            .requestEmail()
+                            .build()
+                        val googleSingInCliente = GoogleSignIn.getClient(context, opciones)
+                        launcher.launch(googleSingInCliente.signInIntent)
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_google),
+                    contentDescription = "Login con Google",
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(40.dp)
+                )
+                Text(
+                    text = "Login con Google",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                if (loginUiState?.isLoading == true) {
+                    CircularProgressIndicator()
+                }
+                LaunchedEffect(key1 = loginViewModel?.hasUser) {
+                    if (loginViewModel?.hasUser == true) {
+                        onNavToHomePage.invoke()
+                    }
                 }
             }
         }
@@ -277,4 +466,10 @@ fun LoginScreenPreview() {
         onNavToHomePage = {},
         onNavToSignUpPage = {}
     )
+}
+
+private fun isScreenLandscape(context: Context): Boolean {
+    val resources = context.resources
+    val configuration = resources.configuration
+    return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 }
