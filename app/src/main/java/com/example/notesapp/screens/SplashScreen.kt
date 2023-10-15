@@ -20,13 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.notesapp.R
 import com.example.notesapp.NestedRoutes
+import com.example.notesapp.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
+fun SplashScreen(navController: NavHostController,isLoggedIn: Boolean) {
     LaunchedEffect(key1 = true) {
         delay(5000) //Con el SplashScreen y el delay permito que la conexión y actualización de datos se realice en segundo plano
         // Despues de 5 segundos, navegue a la pantalla principal
@@ -36,11 +36,12 @@ fun SplashScreen(navController: NavHostController) {
                 popUpTo(NestedRoutes.Splash.name) { inclusive = true }
             }
         } else {
-            //Si el usuario no está logeado, navega a la pantalla de login
-            navController.navigate(NestedRoutes.Login.name) {
+            // Si el usuario no está logueado, muestra la política de privacidad
+            navController.navigate(NestedRoutes.PrivacyPolicy.name) {
                 popUpTo(NestedRoutes.Splash.name) { inclusive = true }
             }
         }
+
     }
     Splash()
 }

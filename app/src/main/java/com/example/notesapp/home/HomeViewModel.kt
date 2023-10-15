@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.notesapp.models.Notes
 import com.example.notesapp.repository.Resources
 import com.example.notesapp.repository.StorageRepository
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -52,4 +51,4 @@ data class HomeUiState(
     val notesList: Resources<List<Notes>> = Resources.Loading(),
     val noteDeletedStatus: Boolean = false
 
-    )
+)

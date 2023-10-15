@@ -43,7 +43,8 @@ class MainActivity : ComponentActivity() {
                     Navigation(
                         loginViewModel = loginViewModel,
                         detailViewModel = detailViewModel,
-                        homeViewModel = homeViewModel
+                        homeViewModel = homeViewModel,
+                        isLoggedIn = true
                     )
                 }
             }

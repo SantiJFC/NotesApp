@@ -1,6 +1,5 @@
 package com.example.notesapp.login
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -55,8 +53,8 @@ fun SignUpScreen(
     loginViewModel: LoginViewModel? = null,
     onNavToHomePage: () -> Unit,
     onNavToLoginPage: () -> Unit,
-    onNavToPrivacyPolicy: () -> Unit
 ) {
+
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.signUpError != null
     val context = LocalContext.current
@@ -65,7 +63,6 @@ fun SignUpScreen(
     fun isValidEmail(email: String): Boolean {
         return EMAIL_VALIDATION_REGEX.toRegex().matches(email)
     }
-
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -90,7 +87,7 @@ fun SignUpScreen(
             modifier = Modifier
                 .size(230.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .border(1.dp, Color.Green, RoundedCornerShape(26.dp))
+                .border(1.dp, Color.Blue, RoundedCornerShape(26.dp))
         )
         Spacer(modifier = Modifier.height(15.dp))
         OutlinedTextField(
@@ -221,23 +218,7 @@ fun SignUpScreen(
             },
             isError = isError
         )
-        Button(
-            onClick = {
-                if (isValidEmail(loginUiState?.userNameSignUp ?: "") &&
-                    loginUiState?.passwordSignUp == loginUiState?.confirmPasswordSignUp
-                ) {
-                    // Realiza la navegación a la pantalla de política de privacidad
-                    onNavToPrivacyPolicy.invoke() // Navega a PrivacyPolicyScreen
-                } else {
-                    // Muestra un mensaje de error si la validación no se cumple
-                    Toast.makeText(
-                        context,
-                        "Por favor, ingrese un correo válido y asegúrese de que las contraseñas coincidan",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        ) {
+        Button(onClick = { loginViewModel?.createUser(context) }) {
             Text(text = "Iniciar sesión")
         }
         Spacer(modifier = Modifier.size(16.dp))
@@ -253,7 +234,7 @@ fun SignUpScreen(
             }
         }
         if (loginUiState?.isLoading == true) {
-           CircularProgressIndicator()
+            CircularProgressIndicator()
         }
         LaunchedEffect(key1 = loginViewModel?.hasUser) {
             if (loginViewModel?.hasUser == true) {
@@ -263,18 +244,11 @@ fun SignUpScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Preview(showBackground = true)
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun SignUpScreenPreview() {
-    val loginViewModel: LoginViewModel? = null // Puedes proporcionar un ViewModel de ejemplo si es necesario
-
+fun PreviewSignUpScreen() {
     NotesAppTheme {
-        SignUpScreen(
-            loginViewModel = loginViewModel,
-            onNavToHomePage = {},
-            onNavToLoginPage = {},
-            onNavToPrivacyPolicy = {}
-        )
+        SignUpScreen(onNavToHomePage = {/*TODO*/ }) {
+        }
     }
 }

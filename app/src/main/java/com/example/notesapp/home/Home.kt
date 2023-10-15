@@ -84,7 +84,10 @@ fun Home(
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = Unit) {
-        homeViewModel?.loadNotes()
+        if (homeUiState.notesList !is Resources.Success) {
+            // Solo carga las notas si aún no se han cargado
+            homeViewModel?.loadNotes()
+        }
     }
 
 

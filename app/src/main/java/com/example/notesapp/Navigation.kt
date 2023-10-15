@@ -1,6 +1,5 @@
 package com.example.notesapp
 
-import PrivacyPolicyScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -17,12 +16,12 @@ import com.example.notesapp.home.HomeViewModel
 import com.example.notesapp.login.LoginScreen
 import com.example.notesapp.login.LoginViewModel
 import com.example.notesapp.login.SignUpScreen
+import com.example.notesapp.screens.PrivacyPolicyScreen
 import com.example.notesapp.screens.SplashScreen
 
 enum class LoginRoutes {
     Signup,
     SignIn,
-    PrivacyPolicy
 }
 
 enum class HomeRoutes {
@@ -34,6 +33,8 @@ enum class NestedRoutes {
     Splash,
     Main,
     Login,
+    PrivacyPolicy
+
 }
 
 @Composable
@@ -42,17 +43,23 @@ fun Navigation(
     loginViewModel: LoginViewModel,
     detailViewModel: DetailViewModel,
     homeViewModel: HomeViewModel,
+    isLoggedIn: Boolean
+    ) {
 
-) {
+
     NavHost(
         navController = navController,
         startDestination = NestedRoutes.Splash.name // Se inicia en el SplashScreen
     ) {
         // Se añade el SplashScreen como primera ventana
         composable(route = NestedRoutes.Splash.name) {
-            SplashScreen(navController = navController)
+            SplashScreen(navController = navController,isLoggedIn = isLoggedIn)
         }
 
+        // Se añade la pantalla de política de privacidad
+        composable(route = NestedRoutes.PrivacyPolicy.name) {
+            PrivacyPolicyScreen(navController = navController)
+        }
         // Se añaden las ventanas para hacer las transiciones
         authGraph(navController, loginViewModel)
         homeGraph(navController = navController, detailViewModel, homeViewModel)
@@ -98,13 +105,14 @@ fun NavGraphBuilder.authGraph(
                         }
                     }
                 },
-                onNavToLoginPage = { /* Puedes dejar esto vacío o realizar alguna acción si es necesario */ },
-                onNavToPrivacyPolicy = {
-                    navController.navigate(LoginRoutes.PrivacyPolicy.name) // Navega a PrivacyPolicyScreen
-                },
                 loginViewModel = loginViewModel
-            )
+
+            ) {
+
+                navController.navigate(LoginRoutes.SignIn.name)
+            }
         }
+
     }
 }
 
@@ -154,24 +162,6 @@ fun NavGraphBuilder.homeGraph(
             }
 
         }
-        composable(route = LoginRoutes.PrivacyPolicy.name) {
-            PrivacyPolicyScreen(
-                onPrivacyAccepted = {
-                    // Si el usuario acepta, navega a Home
-                    navController.navigate(NestedRoutes.Main.name) {
-                        launchSingleTop = true
-                    }
-                },
-                onPrivacyRejected = {
-                    // Si el usuario rechaza, vuelve a SignIn
-                    navController.navigate(LoginRoutes.SignIn.name) {
-                        launchSingleTop = true
-                        popUpTo(LoginRoutes.SignIn.name) {
-                            inclusive = true
-                        }
-                    }
-                }
-            )
-        }
     }
+
 }
