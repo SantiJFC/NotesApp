@@ -1,0 +1,209 @@
+@startuml
+
+interface Composable {
+    SplashScreen(navController, isLoggedIn)
+    PrivacyPolicyScreen(navController)
+    LoginScreen(onNavToHomePage, loginViewModel)
+    SignUpScreen(onNavToHomePage, onNavToLoginPage, loginViewModel)
+    Home(homeViewModel, onNoteClick, navToDetailPage, navToLoginPage)
+    NoteItem(notes, onLongClick, onClick)
+    GoogleSignInButton(signInClicked)
+    DetailScreen(detailViewModel, noteId, onNavigate)
+    ColorItem(color, onClick)
+}
+
+Composable --> SplashScreen
+Composable --> PrivacyPolicyScreen
+Composable --> LoginScreen
+Composable --> SignUpScreen
+Composable --> Home
+Composable --> NoteItem
+Composable --> GoogleSignInButton
+Composable --> DetailScreen
+Composable --> ColorItem
+
+enum LoginRoutes {
+    Signup
+    SignIn
+}
+
+enum HomeRoutes {
+    Home
+    Detail
+}
+
+class Navigation {
+    navController
+    loginViewModel
+    detailViewModel
+    homeViewModel
+    isLoggedIn
+
+    authGraph()
+    homeGraph()
+}
+
+class AuthGraph {
+    navController
+    loginViewModel
+
+    LoginScreen(onNavToHomePage, loginViewModel)
+    SignUpScreen(onNavToHomePage, onNavToLoginPage, loginViewModel)
+}
+
+class HomeGraph {
+    navController
+    detailViewModel
+    homeViewModel
+
+    Home(homeViewModel, onNoteClick, navToDetailPage, navToLoginPage)
+    DetailScreen(detailViewModel, noteId, onNavigate)
+}
+
+Navigation --> NestedRoutes
+
+NestedRoutes --> SplashScreen
+NestedRoutes --> PrivacyPolicyScreen
+NestedRoutes --> AuthGraph
+NestedRoutes --> HomeGraph
+
+class MainActivity {
+    firebaseAnalytics
+    navigation
+
+    +onCreate(savedInstanceState: Bundle?)
+}
+
+MainActivity --> Navigation
+
+class DetailScreen {
+    detailViewModel
+    noteId
+    onNavigate
+
+    +DetailScreen(detailViewModel: DetailViewModel?, noteId: String, onNavigate: () -> Unit)
+}
+
+class DetailViewModel {
+    repository
+    detailUiState
+
+    +onColorChange(colorIndex: Int)
+    +onTitleChange(title: String)
+    +onNoteChange(note: String)
+    +addNote()
+    +setEditFields(note: Notes)
+    +getNote(noteId: String)
+    +updateNote(noteId: String)
+    +resetNoteAddedStatus()
+    +resetState()
+}
+
+class ColorItem
+
+DetailScreen --> DetailViewModel
+
+class Home {
+    homeViewModel
+    onNoteClick
+    navToDetailPage
+    navToLoginPage
+
+    +Home(homeViewModel: HomeViewModel?, onNoteClick: (id: String) -> Unit, navToDetailPage: () -> Unit, navToLoginPage: () -> Unit)
+}
+
+class HomeViewModel {
+    repository
+    homeUiState
+    user
+    hasUser
+
+    +loadNotes()
+    +getUserNotes(userId: String)
+    +deleteNote(noteId: String)
+    +signOut()
+}
+
+class NoteItem
+
+
+Home --> HomeViewModel
+Home --> NoteItem
+Home --> HomeRoutes
+
+class GoogleSignInButton {
+    signInClicked
+
+    +GoogleSignInButton(signInClicked: () -> Unit)
+}
+
+class LoginScreen {
+    navController
+    loginViewModel
+    onNavToHomePage
+    onNavToSignUpPage
+
+    +LoginScreen(navController: NavController = rememberNavController(), loginViewModel: LoginViewModel? = null, onNavToHomePage: () -> Unit, onNavToSignUpPage: () -> Unit)
+}
+
+class LoginViewModel {
+    repository
+    currentUser
+    hasUser
+    loginUiState
+    isPrivacyPolicyAccepted
+
+    +onUserNameChange(userName: String)
+    +onPasswordNameChange(password: String)
+    +onUserNameChangeSignup(userName: String)
+    +onPasswordChangeSignup(password: String)
+    +onConfirmPasswordChange(password: String)
+    +validateLoginForm()
+    +validateSignupForm()
+    +createUser(context: Context)
+    +loginUser(context: Context)
+    +signInWithGoogleCredential(credential: AuthCredential, home: () -> Unit)
+}
+
+class SignUpScreen {
+    loginViewModel
+    onNavToHomePage
+    onNavToLoginPage
+
+    +SignUpScreen(loginViewModel: LoginViewModel? = null, onNavToHomePage: () -> Unit, onNavToLoginPage: () -> Unit)
+}
+
+GoogleSignInButton --> LoginScreen
+LoginScreen --> LoginViewModel
+LoginScreen --> SignUpScreen
+LoginScreen --> LoginRoutes
+
+SignUpScreen --> LoginRoutes
+
+class ColorItem {
+    color
+    onClick
+
+    +ColorItem(color: Color, onClick: () -> Unit)
+}
+
+DetailScreen --> ColorItem
+
+class PrivacyPolicyScreen {
+    navController
+
+    +PrivacyPolicyScreen(navController: NavController)
+}
+
+PrivacyPolicyScreen --> ColorItem
+
+class SplashScreen {
+    navController
+    isLoggedIn
+
+    +SplashScreen(navController: NavHostController, isLoggedIn: Boolean)
+}
+
+SplashScreen --> ColorItem
+
+@enduml

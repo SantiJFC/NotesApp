@@ -1,0 +1,69 @@
+@startuml
+class com.example.notesapp.login.LoginViewModel {
+}
+class com.example.notesapp.login.LoginUiState {
+}
+class com.example.notesapp.Utils {
++  colors
+}
+class com.example.notesapp.models.Notes {
+}
+enum com.example.notesapp.LoginRoutes {
+}
+enum com.example.notesapp.HomeRoutes {
+}
+enum com.example.notesapp.NestedRoutes {
+}
+class com.example.notesapp.detail.DetailViewModel {
+}
+class com.example.notesapp.detail.DetailUiState {
+}
+class com.example.notesapp.repository.StorageRepository {
+- CollectionReference notesRef
++ void user()
++ Boolean hasUser()
++ String getUserId()
++ void getUserNotes(void,String)
++ void null()
++ void getNote(void,String,void,(Throwable?) -> Unit,void,(Notes?) -> Unit)
++ void null()
++ void addNote(void,String,void,String,void,String,void,Timestamp,void,Int,void,(Boolean) -> Unit,void)
++ void deleteNote(String,(Boolean) -> Unit)
++ void updateNote(void,String,void,String,void,Int,void,String,void,(Boolean) -> Unit)
++ void null()
++ void signOut()
+}
+class com.example.notesapp.repository.Resources$Loading {
+}
+class com.example.notesapp.repository.Resources$Success {
+}
+class com.example.notesapp.repository.Resources$Error {
+}
+class com.example.notesapp.repository.Resources {
+}
+class com.example.notesapp.repository.AuthRepository {
++ FirebaseUser? currentUser
++ Boolean hasUser()
++ String getUserId()
++ void createUser(void,String,void,String,void,(Boolean) -> Unit)
++ void null()
++ void login(void,String,void,String,void,(Boolean) -> Unit)
++ void null()
+}
+class com.example.notesapp.home.HomeViewModel {
+}
+class com.example.notesapp.home.HomeUiState {
+}
+class com.example.notesapp.MainActivity {
++ void onCreate(Bundle?)
+}
+
+
+com.example.notesapp.repository.Resources +.. com.example.notesapp.repository.Resources$Loading
+com.example.notesapp.repository.Resources<T> <|-- com.example.notesapp.repository.Resources$Loading
+com.example.notesapp.repository.Resources +.. com.example.notesapp.repository.Resources$Success
+com.example.notesapp.repository.Resources<T> <|-- com.example.notesapp.repository.Resources$Success
+com.example.notesapp.repository.Resources +.. com.example.notesapp.repository.Resources$Error
+com.example.notesapp.repository.Resources<T> <|-- com.example.notesapp.repository.Resources$Error
+androidx.activity.ComponentActivity <|-- com.example.notesapp.MainActivity
+@enduml

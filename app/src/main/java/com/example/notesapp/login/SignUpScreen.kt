@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -151,7 +152,7 @@ fun SignUpScreen(
                 if (showPassword.value) {
                     IconButton(onClick = { showPassword.value = false }) {
                         Icon(
-                            imageVector = Icons.Filled.VisibilityOff,
+                            imageVector = Icons.Filled.Visibility,
                             contentDescription = stringResource(id = R.string.oculta_contrasena)
                         )
                     }
@@ -197,7 +198,7 @@ fun SignUpScreen(
                 if (showPassword.value) {
                     IconButton(onClick = { showPassword.value = false }) {
                         Icon(
-                            imageVector = Icons.Filled.VisibilityOff,
+                            imageVector = Icons.Filled.Visibility,
                             contentDescription = stringResource(id = R.string.oculta_contrasena)
                         )
                     }
