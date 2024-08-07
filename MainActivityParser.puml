@@ -1,0 +1,8 @@
+@startuml
+class com.example.notesapp.MainActivity {
++ void onCreate(Bundle?)
+}
+
+
+androidx.activity.ComponentActivity <|-- com.example.notesapp.MainActivity
+@enduml

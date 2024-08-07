@@ -16,11 +16,12 @@ import com.example.notesapp.home.HomeViewModel
 import com.example.notesapp.login.LoginScreen
 import com.example.notesapp.login.LoginViewModel
 import com.example.notesapp.login.SignUpScreen
+import com.example.notesapp.screens.PrivacyPolicyScreen
 import com.example.notesapp.screens.SplashScreen
 
 enum class LoginRoutes {
     Signup,
-    SignIn
+    SignIn,
 }
 
 enum class HomeRoutes {
@@ -31,7 +32,9 @@ enum class HomeRoutes {
 enum class NestedRoutes {
     Splash,
     Main,
-    Login
+    Login,
+    PrivacyPolicy
+
 }
 
 @Composable
@@ -40,17 +43,23 @@ fun Navigation(
     loginViewModel: LoginViewModel,
     detailViewModel: DetailViewModel,
     homeViewModel: HomeViewModel,
+    isLoggedIn: Boolean
+    ) {
 
-) {
+
     NavHost(
         navController = navController,
         startDestination = NestedRoutes.Splash.name // Se inicia en el SplashScreen
     ) {
         // Se añade el SplashScreen como primera ventana
         composable(route = NestedRoutes.Splash.name) {
-            SplashScreen(navController = navController)
+            SplashScreen(navController = navController,isLoggedIn = isLoggedIn)
         }
 
+        // Se añade la pantalla de política de privacidad
+        composable(route = NestedRoutes.PrivacyPolicy.name) {
+            PrivacyPolicyScreen(navController = navController)
+        }
         // Se añaden las ventanas para hacer las transiciones
         authGraph(navController, loginViewModel)
         homeGraph(navController = navController, detailViewModel, homeViewModel)

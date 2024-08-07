@@ -1,0 +1,106 @@
+@startuml
+
+class MainActivity {
+  + onCreate()
+}
+
+enum LoginRoutes {
+  Signup
+  SignIn
+}
+
+enum HomeRoutes {
+  Home
+  Detail
+}
+
+enum NestedRoutes {
+  Splash
+  Main
+  Login
+  PrivacyPolicy
+}
+
+class Navigation {
+  + authGraph()
+  + homeGraph()
+}
+
+class LoginViewModel {
+  - repository
+  + loginUser()
+  + createUser()
+}
+
+class HomeViewModel {
+  - repository
+  + loadNotes()
+  + deleteNote()
+}
+
+class DetailViewModel {
+  - repository
+  + getNote()
+  + updateNote()
+}
+
+class AuthRepository {
+  + login()
+  + createUser()
+}
+
+class StorageRepository {
+  + getUserNotes()
+  + addNote()
+  + updateNote()
+}
+
+class Notes {
+  - userId
+  - title
+  - description
+  - timestamp
+  - colorIndex
+}
+
+class MainActivity
+MainActivity ..> Navigation : creates
+
+class LoginViewModel
+LoginViewModel ..> AuthRepository : uses
+
+class HomeViewModel
+HomeViewModel ..> StorageRepository : uses
+
+class DetailViewModel
+DetailViewModel ..> StorageRepository : uses
+
+
+class Notes
+Notes "parent" -- "child" LoginViewModel
+Notes "parent" -- "child" HomeViewModel
+Notes "parent" -- "child" DetailViewModel
+
+class Navigation
+Navigation ..> LoginViewModel : uses
+Navigation ..> HomeViewModel : uses
+Navigation ..> DetailViewModel : uses
+
+
+LoginViewModel ..> AuthRepository
+HomeViewModel ..> StorageRepository
+DetailViewModel ..> StorageRepository
+
+
+
+
+
+
+
+
+
+
+
+
+
+@enduml

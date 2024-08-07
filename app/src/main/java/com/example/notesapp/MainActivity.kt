@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
             val detailViewModel = viewModel(modelClass = DetailViewModel::class.java)
 
             NotesAppTheme {
-                // A surface container using the 'background' color from the theme
+                //El surface permite usar el fondo del pantalla del tema
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -43,7 +43,8 @@ class MainActivity : ComponentActivity() {
                     Navigation(
                         loginViewModel = loginViewModel,
                         detailViewModel = detailViewModel,
-                        homeViewModel = homeViewModel
+                        homeViewModel = homeViewModel,
+                        isLoggedIn = true
                     )
                 }
             }

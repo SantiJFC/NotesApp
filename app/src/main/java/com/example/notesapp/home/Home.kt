@@ -84,8 +84,12 @@ fun Home(
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = Unit) {
-        homeViewModel?.loadNotes()
+        if (homeUiState.notesList !is Resources.Success) {
+            // Solo carga las notas si aún no se han cargado
+            homeViewModel?.loadNotes()
+        }
     }
+
 
     ////////////////////////////////////////////////////////////////////////
     /*    //Si deshabilito este segmento tengo la pervisualización
@@ -170,7 +174,7 @@ fun Home(
                                     onDismissRequest = {
                                         openDialog = false
                                     },
-                                    title = { Text(text = "Borrar nota?") },
+                                    title = { Text(text = "¿Borrar nota?") },
                                     confirmButton = {
                                         Button(
                                             onClick = {
@@ -224,7 +228,7 @@ fun NoteItem(
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
-    Card( //Genero eventos sobre plantas para hacer diferentes clicks
+    Card( //Genero eventos sobre notas para hacer diferentes clicks
         modifier = Modifier
             .combinedClickable(
                 onLongClick = { onLongClick.invoke() },
@@ -292,7 +296,6 @@ fun BannerAd(modifier: Modifier = Modifier, adId: String) {
                     loadAd(AdRequest.Builder().build())
                 }
             }
-
         )
     }
 }
@@ -300,5 +303,5 @@ fun BannerAd(modifier: Modifier = Modifier, adId: String) {
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    Home(homeViewModel = null, onNoteClick = {}, navToDetailPage = { /*TODO*/ }) {}
+    Home(homeViewModel = null, onNoteClick = {}, navToDetailPage = { /* TODO */ }) {}
 }

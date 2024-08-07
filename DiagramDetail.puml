@@ -1,0 +1,6 @@
+@startuml
+class com.example.notesapp.detail.DetailViewModel {
+}
+class com.example.notesapp.detail.DetailUiState {
+}
+@enduml
