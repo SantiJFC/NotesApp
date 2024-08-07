@@ -296,7 +296,6 @@ fun BannerAd(modifier: Modifier = Modifier, adId: String) {
                     loadAd(AdRequest.Builder().build())
                 }
             }
-
         )
     }
 }
